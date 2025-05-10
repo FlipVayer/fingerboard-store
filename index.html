@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tienda de Fingerboards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Fingerboard Store</h1>
+    <p>¡La tienda definitiva para todos los amantes del Fingerboard!</p>
+  </header>
+
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#">Productos</a>
+    <a href="#">Contacto</a>
+  </nav>
+
+  <div style="text-align:center; margin-top: 30px;">
+    <input type="text" id="customerName" placeholder="Tu nombre" style="padding:10px; width: 250px; font-size: 16px;" />
+    <br><br>
+    <input type="email" id="customerEmail" placeholder="Tu correo (ej: ejemplo@gmail.com)" style="padding:10px; width: 80%; font-size: 16px;" />
+  </div>
+
+  <div class="container" id="productContainer">
+    <!-- Productos -->
+    <div class="product">
+      <h3>Finger Board Tech Deck Normal</h3>
+      <img src="https://production-tailoy-repo-magento-statics.s3.amazonaws.com/imagenes/872x872/productos/i/p/a/patinerta-para-dedos-tech-deck-serie-3-surtido-74601001-default-4.jpg" alt="Finger Board Tech Deck Normal" class="product-img">
+      <p>El clásico Tech Deck con la mejor calidad en madera, perfecto para tus trucos más extremos.</p>
+      <p>Precio: S/ 14.99</p>
+      <div class="button-container">
+        <button onclick="buyProduct('Finger Board Tech Deck Normal', 14.99)">Comprar</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <h3>Finger Board Tech Deck Normal II</h3>
+      <img src="https://i.ebayimg.com/images/g/trgAAOSw5dRm~gYH/s-l1200.jpg" alt="Finger Board Tech Deck II" class="product-img">
+      <p>El clásico Tech Deck con la mejor calidad en madera, perfecto para tus trucos más extremos. ¡Hazlo tuyo!</p>
+      <p>Precio: S/ 14.99</p>
+      <div class="button-container">
+        <button onclick="buyProduct('Finger Board Tech Deck II', 19.99)">Comprar</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <h3>Trucks para Fingerboard</h3>
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQue3N9FNEmLNGbn5jgu2iszHTzbVloDoYd7gpXjUREo9Rj5sVbc_xeddp9DFOcoPCy8Ss&usqp=CAU" alt="Trucks para Fingerboard" class="product-img">
+      <p>Trucks de precisión y durabilidad que te permitirán realizar trucos complejos con facilidad.</p>
+      <p>Precio: S/ 7.99</p>
+      <div class="button-container">
+        <button onclick="buyProduct('Trucks para Fingerboard', 7.99)">Comprar</button>
+      </div>
+    </div>
+
+    <div class="product">
+      <h3>Finger Board Tech Deck Pequeño</h3>
+      <img src="https://production-tailoy-repo-magento-statics.s3.amazonaws.com/imagenes/872x872/productos/i/t/e/tech-deck-patineta-surtido-83501-default-1.jpg" alt="Finger Board Tech Deck Pequeño" class="product-img">
+      <p>El Tech Deck en su versión más delgada, ideal para trucos rápidos y maniobras precisas.</p>
+      <p>Precio: S/ 12.99</p>
+      <div class="button-container">
+        <button onclick="buyProduct('Finger Board Tech Deck Pequeño', 12.99)">Comprar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Fingerboard Store. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    const selectedProducts = [];
+
+    function buyProduct(productName, productPrice) {
+      const name = document.getElementById('customerName').value.trim();
+      const email = document.getElementById('customerEmail').value.trim();
+
+      if (!name || !email || !email.includes('@')) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Por favor, ingresa tu nombre y un correo válido.'
+        });
+        return;
+      }
+
+      selectedProducts.push({ productName, productPrice });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Producto agregado',
+        text: '¿Quieres añadir otro producto?',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, otro más',
+        cancelButtonText: 'No, ya terminé'
+      }).then((result) => {
+        if (!result.isConfirmed) {
+          const orderData = {
+            name,
+            email,
+            products: selectedProducts
+          };
+          localStorage.setItem('orderData', JSON.stringify(orderData));
+          Swal.fire({
+            icon: 'success',
+            title: '¡Compra completada!',
+            text: 'Tu pedido ha sido registrado.',
+            timer: 2000,
+            showConfirmButton: false
+          }).then(() => {
+            // Redirigir a la página de confirmación
+            window.location.href = 'confirmation.html';
+          });
+        }
+      });
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #3a3a3a, #f4f4f4);
+      color: #333;
+    }
+
+    header {
+      background-color: #111;
+      color: white;
+      text-align: center;
+      padding: 50px 20px;
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    header h1 {
+      font-size: 3em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    header p {
+      font-size: 1.5em;
+      margin-top: 0;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .product {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+      width: 250px;
+      text-align: center;
+    }
+
+    .product img {
+      width: 200px;  /* Todas las imágenes ahora tienen el mismo tamaño */
+      height: 200px; /* Asegura que la altura sea igual que el ancho */
+      object-fit: cover; /* Mantiene la proporción de la imagen */
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .button-container button {
+      background-color: #ff6f00;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-container button:hover {
+      background-color: #ff8c00;
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+    }
+  </style>
+
+</body>
+</html>
