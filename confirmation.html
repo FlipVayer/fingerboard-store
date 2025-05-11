@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirmación de Compra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <header>
+    <h1>Confirmación de Compra</h1>
+    <p>¡Gracias por tu compra! Aquí están los detalles de tu pedido.</p>
+  </header>
+
+  <div class="container" style="margin-top: 50px;">
+    <div class="confirmation-box" style="background-color: white; padding: 40px; border-radius: 10px; box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);">
+      <h2>Detalles de la Compra</h2>
+      <p><strong>Nombre del comprador:</strong> <span id="buyerName"></span></p>
+      <p><strong>Correo del comprador:</strong> <span id="buyerEmail"></span></p>
+      <h3>Productos comprados:</h3>
+      <ul id="productList"></ul>
+
+      <!-- Cuadro para ingresar el código de descuento -->
+      <div class="discount-box" style="margin-top: 20px;">
+        <input type="text" id="discountCode" placeholder="Ingresa tu código de descuento" style="padding: 10px; width: 100%; font-size: 16px; border-radius: 10px; margin-bottom: 20px;"/>
+        <button onclick="applyDiscount()" style="padding: 10px 20px; background-color: #ff6600; color: white; border-radius: 5px; font-size: 16px; cursor: pointer; border: none;">Aplicar descuento</button>
+      </div>
+
+      <p><strong>Total original:</strong> S/ <span id="originalTotal"></span></p>
+      <p><strong>Descuento aplicado:</strong> S/ <span id="discountAmount"></span></p>
+      <p><strong>Total con descuento:</strong> S/ <span id="finalTotal"></span></p>
+
+      <div class="footer-text" style="margin-top: 30px;">
+        <p>Envía una captura de esta página al correo <strong>juanjesusgutierrezquispe.12@gmail.com</strong> para confirmar tu compra.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Fingerboard Store. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    let appliedDiscount = false;
+
+    window.onload = function() {
+      const orderData = JSON.parse(localStorage.getItem('orderData'));
+      if (orderData) {
+        document.getElementById('buyerName').textContent = orderData.name;
+        document.getElementById('buyerEmail').textContent = orderData.email;
+
+        const productList = document.getElementById('productList');
+        let originalTotal = 0;
+        orderData.products.forEach(product => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `${product.productName} - S/ ${product.productPrice}`;
+          productList.appendChild(listItem);
+          originalTotal += product.productPrice;
+        });
+
+        // Mostrar los valores iniciales
+        document.getElementById('originalTotal').textContent = originalTotal.toFixed(2);
+        document.getElementById('discountAmount').textContent = "0.00";
+        document.getElementById('finalTotal').textContent = originalTotal.toFixed(2);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'No se encontró tu compra',
+          text: 'Por favor, realiza una compra antes de acceder a esta página.'
+        }).then(() => {
+          window.location.href = 'index.html';
+        });
+      }
+    };
+
+    function roundUpTo99(value) {
+      const base = Math.floor(value);
+      return value > base + 0.99 ? base + 1.99 : base + 0.99;
+    }
+
+    function applyDiscount() {
+      const discountCode = document.getElementById('discountCode').value.trim();
+      let discountAmount = 0;
+      const originalTotal = parseFloat(document.getElementById('originalTotal').textContent);
+      let finalTotal = originalTotal;
+
+if (discountCode === 'TheVayer' && !appliedDiscount) {
+  discountAmount = finalTotal * 0.20; // <-- ahora 20% en vez de 25%
+  appliedDiscount = true;
+  Swal.fire({
+    icon: 'success',
+    title: 'Descuento aplicado',
+    text: '¡El descuento del 20% ha sido aplicado exitosamente!'
+  });
+
+
+
+      } else if (discountCode === 'Gaa' && !appliedDiscount) {
+        discountAmount = finalTotal * 0.10;
+        appliedDiscount = true;
+        Swal.fire({
+          icon: 'success',
+          title: 'Descuento aplicado',
+          text: '¡El descuento del 10% ha sido aplicado exitosamente!'
+        });
+      } else if (discountCode === 'Baje de Pepa') {
+        changeColorsForEasterEgg();
+        setTimeout(resetColors, 10000);
+        return;
+      } else if (appliedDiscount) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Ya has aplicado el descuento',
+          text: 'El descuento ya fue añadido a tu compra.'
+        });
+        return;
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Código incorrecto',
+          text: 'El código de descuento no es válido.'
+        });
+        return;
+      }
+
+      // Aplicar descuento correctamente y redondear al .99 más cercano
+      discountAmount = parseFloat(discountAmount.toFixed(2));
+      const discountedTotal = originalTotal - discountAmount;
+      const finalTotalRounded = roundUpTo99(discountedTotal);
+
+      document.getElementById('discountAmount').textContent = discountAmount.toFixed(2);
+      document.getElementById('finalTotal').textContent = finalTotalRounded.toFixed(2);
+    }
+
+    function changeColorsForEasterEgg() {
+      document.body.style.backgroundColor = '#ff6699';
+      document.querySelector('.confirmation-box').style.backgroundColor = '#ffccff';
+      document.querySelector('.discount-box').style.backgroundColor = '#ffccff';
+      document.querySelector('button').style.backgroundColor = '#ff3300';
+      document.querySelector('h1').style.color = '#ffffff';
+      document.querySelector('h2').style.color = '#ffffff';
+      document.querySelector('p').style.color = '#ffffff';
+      document.querySelector('.footer-text').style.backgroundColor = '#ffccff';
+      document.querySelector('.footer-text').style.color = '#ffffff';
+    }
+
+    function resetColors() {
+      document.body.style.backgroundColor = '#ffffff';
+      document.querySelector('.confirmation-box').style.backgroundColor = 'white';
+      document.querySelector('.discount-box').style.backgroundColor = 'white';
+      document.querySelector('button').style.backgroundColor = '#ff6600';
+      document.querySelector('h1').style.color = '#111';
+      document.querySelector('h2').style.color = '#2c3e50';
+      document.querySelector('p').style.color = '#333';
+      document.querySelector('.footer-text').style.backgroundColor = '#f9f9f9';
+      document.querySelector('.footer-text').style.color = '#333';
+    }
+  </script>
+
+</body>
+</html>
