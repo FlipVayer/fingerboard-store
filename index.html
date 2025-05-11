@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tienda de Fingerboards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: white;
+    }
+
+    nav {
+      text-align: center;
+      background-color: #444;
+      padding: 10px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 1.1em;
+    }
+
+    .styled-input {
+      width: 60%;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      font-size: 1em;
+      background-color: #fff;
+    }
+
+    .styled-input:focus {
+      border-color: #007BFF;
+      outline: none;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .product {
+      background-color: white;
+      border-radius: 10px;
+      margin: 20px;
+      padding:
+      20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 300px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .product:hover {
+      transform: translateY(-10px);
+    }
+
+    .product-img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+    }
+
+    select {
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    button {
+      padding: 12px 20px;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    footer {
+      text-align: center;
+      background-color: #333;
+      color: white;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fingerboard Store</h1>
+    <p>¡La tienda definitiva para todos los amantes del Fingerboard!</p>
+  </header>
+
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#">Productos</a>
+    <a href="#">Contacto</a>
+  </nav>
+
+  <div style="text-align:center; margin-top: 30px;">
+    <input type="text" id="customerName" placeholder="Tu nombre" class="styled-input" />
+    <input type="email" id="customerEmail" placeholder="Tu correo (ej: ejemplo@gmail.com)" class="styled-input" />
+  </div>
+
+  <div class="container" id="productContainer"></div>
+
+  <footer>
+    <p>&copy; 2025 Fingerboard Store. Todos los derechos reservados.</p>
+  </footer>
+
+  <script>
+    const selectedProducts = [];
+
+    const products = [
+      { name: 'Finger Board Tech Deck Normal', price: 14.99, img: 'https://production-tailoy-repo-magento-statics.s3.amazonaws.com/imagenes/872x872/productos/i/p/a/patinerta-para-dedos-tech-deck-serie-3-surtido-74601001-default-4.jpg', desc: 'El clásico Tech Deck con la mejor calidad en madera, perfecto para tus trucos más extremos.' },
+      { name: 'Finger Board Tech Deck II', price: 19.99, img: 'https://i.ebayimg.com/images/g/trgAAOSw5dRm~gYH/s-l1200.jpg', desc: 'Un modelo especial para aquellos que buscan una experiencia diferente. ¡Hazlo tuyo!' },
+      { name: 'Trucks para Fingerboard', price: 7.99, img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQue3N9FNEmLNGbn5jgu2iszHTzbVloDoYd7gpXjUREo9Rj5sVbc_xeddp9DFOcoPCy8Ss&usqp=CAU', desc: 'Trucks de precisión y durabilidad que te permitirán realizar trucos complejos con facilidad.' },
+      { name: 'Finger Board Tech Deck Pequeño', price: 12.99, img: 'https://production-tailoy-repo-magento-statics.s3.amazonaws.com/imagenes/872x872/productos/i/t/e/tech-deck-patineta-surtido-83501-default-1.jpg', desc: 'El Tech Deck en su versión más delgada, ideal para trucos rápidos y maniobras precisas.' },
+      { name: 'Finger Board Premium', price: 24.99, img: 'https://ae-pic-a1.aliexpress-media.com/kf/S453e89cdc39e4fe3acae9579a2b51f7bP.jpg_220x220q75.jpg_.avif', desc: 'Un fingerboard de alta calidad, diseñado para los más exigentes. Ideal para maniobras de alto rendimiento.', color: false },
+      { name: 'Ruedas para Fingerboard', price: 4.99, img: 'https://img.ltwebstatic.com/images3_spmp/2024/01/02/ce/170418397116ff289027ed82ec450905e2e870d727_thumbnail_720x.jpg', desc: 'Juego de ruedas de calidad profesional. ¡Elige tu color favorito y rodá como pro!' },
+    ];
+
+    const container = document.getElementById('productContainer');
+    products.forEach(prod => {
+      const hasColor = prod.color !== false;
+      container.innerHTML += `
+        <div class="product">
+          <h3>${prod.name}</h3>
+          <img src="${prod.img}" alt="${prod.name}" class="product-img">
+          <p>${prod.desc}</p>
+          <p><strong>Precio: S/ ${prod.price.toFixed(2)}</strong></p>
+          ${hasColor ? `
+          <select class="colorSelect">
+            <option value="">Elige un color</option>
+            <option>Amarillo</option>
+            <option>Gris</option>
+            <option>Rojo</option>
+            <option>Blanco</option>
+          </select>` : ''}
+          <div class="button-container">
+            <button onclick="buyProduct('${prod.name}', ${prod.price})">Comprar</button>
+          </div>
+        </div>
+      `;
+    });
+
+    function buyProduct(productName, productPrice) {
+      const name = document.getElementById('customerName').value.trim();
+      const email = document.getElementById('customerEmail').value.trim();
+
+      if (!name || !email || !email.includes('@')) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Por favor, ingresa tu nombre y un correo válido.'
+        });
+        return;
+      }
+
+      let color = '';
+      const parent = event.target.closest('.product');
+      const select = parent.querySelector('.colorSelect');
+      if (select) {
+        color = select.value;
+      }
+
+      selectedProducts.push({ productName, productPrice, color });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Producto agregado',
+        text: '¿Quieres añadir otro producto?',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, otro más',
+        cancelButtonText: 'No, ya terminé'
+      }).then((result) => {
+        if (!result.isConfirmed) {
+          const orderData = {
+            name,
+            email,
+            products: selectedProducts
+          };
+          localStorage.setItem('orderData', JSON.stringify(orderData));
+          Swal.fire({
+            icon: 'success',
+            title: '¡Compra completada!',
+            text: 'Tu pedido ha sido registrado.',
+            timer: 2000,
+            showConfirmButton: false
+          }).then(() => {
+            window.location.href = 'confirmation.html';
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
