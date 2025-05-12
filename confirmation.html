@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Boleta de Compra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #333;
+      color: white;
+    }
+
+    .receipt {
+      max-width: 600px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #007bff;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .discount-section {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+    }
+
+    .discount-section input {
+      padding: 10px;
+      width: 80%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+
+    .discount-section button {
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .discount-section button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>BOLETA</h1>
+    <p>Gracias por confiar en Fingerboard Store</p>
+  </header>
+
+  <div class="receipt">
+    <h2>Resumen de tu pedido</h2>
+    <p><strong>Nombre:</strong> <span id="buyerName"></span></p>
+    <p><strong>Correo:</strong> <span id="buyerEmail"></span></p>
+
+    <h3>Productos comprados:</h3>
+    <ul id="productList"></ul>
+
+    <p><strong>Total:</strong> S/ <span id="totalAmount"></span></p>
+
+    <!-- Sección de descuento -->
+    <div class="discount-section">
+      <label for="discountCode">Código de descuento:</label>
+      <input type="text" id="discountCode" placeholder="Ingresa tu código">
+      <button onclick="applyDiscount()">Aplicar Descuento</button>
+      <p id="discountMessage" style="color: green; margin-top: 10px; display: none;">Descuento aplicado: 10%</p>
+    </div>
+
+    <p>Envía este recibo al correo <strong>juanjesusgutierrezquispe.12@gmail.com</strong> para confirmar tu compra.</p>
+  </div>
+
+  <script>
+    window.onload = () => {
+      const order = JSON.parse(localStorage.getItem('orderData'));
+
+      if (!order) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'No se encontró ningún pedido.',
+        }).then(() => {
+          window.location.href = 'index.html';
+        });
+        return;
+      }
+
+      // Marca que vienes de la compra para mostrar alerta al volver
+      sessionStorage.setItem('fromConfirmation', true);
+
+      document.getElementById('buyerName').textContent = order.name;
+      document.getElementById('buyerEmail').textContent = order.email;
+
+      let total = 0;
+      const productList = document.getElementById('productList');
+
+      order.products.forEach(product => {
+        const item = document.createElement('li');
+        item.textContent = `${product.name} - S/ ${product.price}`;
+        total += product.price;
+        productList.appendChild(item);
+      });
+
+      document.getElementById('totalAmount').textContent = total.toFixed(2);
+
+      // Almacenar el total sin descuento
+      sessionStorage.setItem('totalAmount', total.toFixed(2));
+    };
+
+    function applyDiscount() {
+      const discountCode = document.getElementById('discountCode').value.trim();
+      let total = parseFloat(sessionStorage.getItem('totalAmount'));
+
+      if (discountCode === 'FINGER10') {
+        const discountAmount = total * 0.10; // 10% de descuento
+        total -= discountAmount;
+        document.getElementById('discountMessage').style.display = 'block';
+        document.getElementById('totalAmount').textContent = total.toFixed(2);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Código de descuento inválido',
+          text: 'El código ingresado no es válido. Intenta nuevamente.',
+        });
+      }
+    }
+  </script>
+</body>
+</html>
