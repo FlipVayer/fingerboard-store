@@ -284,7 +284,7 @@
           <p><strong>Precio: S/ ${prod.price.toFixed(2)}</strong></p>
           ${colorSelector}
           <div class="button-container">
-            <button onclick="confirmPurchase('${prod.name}', ${prod.price}, ${prod.isFingerboard ? `document.getElementById('colorSelector-${index}').value` : 'null'})">Comprar</button>
+            <button onclick="confirmPurchase('${prod.name}', ${prod.price}, ${prod.isFingerboard ? `document.getElementById('colorSelector-${index}').value` : 'null'}, '${prod.images[0]}')">Comprar</button>
           </div>
         </div>
       `;
@@ -304,7 +304,7 @@
       document.getElementById(`img-${index}`).src = prod.images[prod.currentImg];
     }
 
-    function confirmPurchase(productName, productPrice, selectedColor) {
+    function confirmPurchase(productName, productPrice, selectedColor, productImg) {
       const name = document.getElementById('customerName').value;
       const email = document.getElementById('customerEmail').value;
       if (!name || !email) {
@@ -313,6 +313,8 @@
       }
 
       const color = selectedColor ? selectedColor : 'Sin color';
+
+      selectedProducts.push({ name: productName, price: productPrice, color: color, image: productImg });
 
       Swal.fire({
         title: '¿Quieres comprar otro producto?',
@@ -323,12 +325,8 @@
         cancelButtonText: 'No, ir a confirmación',
       }).then(result => {
         if (result.isConfirmed) {
-          selectedProducts.push({ name: productName, price: productPrice, color: color });
-
           Swal.fire('Producto agregado al carrito. ¡Sigue comprando!');
         } else {
-          selectedProducts.push({ name: productName, price: productPrice, color: color });
-
           localStorage.setItem('orderData', JSON.stringify({
             name: name,
             email: email,
