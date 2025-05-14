@@ -3,189 +3,178 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Boleta de Compra</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <title>Confirmación de Compra</title>
   <style>
     body {
       font-family: 'Poppins', sans-serif;
       background-color: #f4f4f9;
+      color: #333;
+      text-align: center;
       margin: 0;
       padding: 0;
-      color: #333;
     }
-
     header {
-      text-align: center;
-      padding: 20px;
       background-color: #333;
       color: white;
+      padding: 20px;
     }
-
-    .receipt {
-      max-width: 600px;
-      margin: 30px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    h1 {
+      margin-top: 30px;
     }
-
-    h2 {
-      color: #007bff;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-    }
-
-    .discount-section {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #f1f1f1;
-      border-radius: 5px;
-    }
-
-    .discount-section input {
-      padding: 10px;
+    .product-confirmation {
+      margin-top: 50px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       width: 80%;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      margin-right: 10px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
-
-    .discount-section button {
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
+    .product-img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .button-container {
+      margin-top: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007BFF;
       border: none;
+      color: white;
       border-radius: 5px;
+      font-size: 1em;
       cursor: pointer;
     }
-
-    .discount-section button:hover {
+    button:hover {
       background-color: #0056b3;
     }
-
-    #discountMessage {
+    footer {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      margin-top: 50px;
+      text-align: center;
+    }
+    .discount-container {
+      margin-top: 30px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .discount-container input {
+      padding: 10px;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .discount-container button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    .discount-container button:hover {
+      background-color: #218838;
+    }
+    .discount-message {
+      margin-top: 20px;
+      font-size: 1.2em;
       color: green;
-      margin-top: 10px;
-      display: none;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>BOLETA</h1>
-    <p>Gracias por confiar en Fingerboard Store</p>
+    <h1>¡Gracias por tu compra!</h1>
   </header>
 
-  <div class="receipt">
-    <h2>Resumen de tu pedido</h2>
-    <p><strong>Nombre:</strong> <span id="buyerName"></span></p>
-    <p><strong>Correo:</strong> <span id="buyerEmail"></span></p>
+  <div id="confirmation"></div>
 
-    <h3>Productos comprados:</h3>
-    <ul id="productList"></ul>
-
-    <p><strong>Total:</strong> S/ <span id="totalAmount"></span></p>
-
-    <!-- Sección de descuento -->
-    <div class="discount-section">
-      <label for="discountCode">Código de descuento:</label>
-      <input type="text" id="discountCode" placeholder="Ingresa tu código">
-      <button onclick="applyDiscount()">Aplicar Descuento</button>
-      <p id="discountMessage"></p>
-    </div>
-
-    <p>Envía este recibo al correo <strong>juanjesusgutierrezquispe.12@gmail.com</strong> para confirmar tu compra.</p>
+  <div class="discount-container">
+    <h4>¿Tienes un código de descuento?</h4>
+    <input type="text" id="discountCode" placeholder="Introduce tu código aquí" />
+    <button onclick="applyDiscount()">Aplicar Descuento</button>
+    <div id="discountMessage" class="discount-message"></div>
   </div>
 
+  <div class="button-container">
+    <button onclick="window.location.href = 'index.html'">Volver a la tienda</button>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Fingerboard Store. Todos los derechos reservados.</p>
+  </footer>
+
   <script>
-    window.onload = () => {
-      const order = JSON.parse(localStorage.getItem('orderData'));
-
-      if (!order) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'No se encontró ningún pedido.',
-        }).then(() => {
-          window.location.href = 'index.html';
-        });
-        return;
-      }
-
-      sessionStorage.setItem('fromConfirmation', true);
-
-      document.getElementById('buyerName').textContent = order.name;
-      document.getElementById('buyerEmail').textContent = order.email;
-
-      let total = 0;
-      const productList = document.getElementById('productList');
-
-      order.products.forEach(product => {
-        const item = document.createElement('li');
-        item.textContent = `${product.name} - S/ ${parseFloat(product.price).toFixed(2)}`;
-        total += parseFloat(product.price);
-        productList.appendChild(item);
-      });
-
-      document.getElementById('totalAmount').textContent = total.toFixed(2);
-      sessionStorage.setItem('totalAmount', total.toFixed(2));
-      sessionStorage.setItem('orderProducts', JSON.stringify(order.products));
-    };
+    // Obtener los datos de la compra almacenados en localStorage
+    const orderData = JSON.parse(localStorage.getItem('orderData'));
+    if (orderData) {
+      // Mostrar los datos de la compra en la página
+      document.getElementById('confirmation').innerHTML = `
+        <div class="product-confirmation">
+          <h3>Gracias por tu compra, ${orderData.name}!</h3>
+          <p>Hemos recibido tu pedido y se enviará a ${orderData.email}.</p>
+          <h4>Detalles de tu compra:</h4>
+          <ul>
+            ${orderData.products.map(product => `
+              <li>
+                <img src="${product.image}" alt="Imagen del producto" class="product-img"/>
+                <p><strong>${product.name}</strong></p>
+                <p>Color: ${product.color}</p>
+                <p>Precio: S/ ${product.price.toFixed(2)}</p>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `;
+      // Limpiar los datos del carrito una vez confirmada la compra
+      localStorage.removeItem('orderData');
+    } else {
+      document.getElementById('confirmation').innerHTML = `
+        <p>No se encontró información de compra.</p>
+      `;
+    }
 
     function applyDiscount() {
       const code = document.getElementById('discountCode').value.trim().toUpperCase();
+      const validCodes = {
+        "JEREMIAS30": 0.30,
+        "FINGER10": 0.10,
+        "VASCO30": 0.30
+      };
+      
       const discountMessage = document.getElementById('discountMessage');
-      let total = parseFloat(sessionStorage.getItem('totalAmount'));
-      const products = JSON.parse(sessionStorage.getItem('orderProducts'));
-      let discount = 0;
+      if (validCodes[code]) {
+        const discount = validCodes[code];
+        discountMessage.innerHTML = `¡Código ${code} aplicado! Descuento: ${discount * 100}%`;
 
-      if (code === 'FINGER10') {
-        discount = total * 0.10;
-        total -= discount;
-        discountMessage.textContent = 'Descuento aplicado: 10% al total';
-        discountMessage.style.color = 'green';
-        discountMessage.style.display = 'block';
-      } 
-      else if (code === 'JEREMIAS60') {
-        const eligibleItems = products.filter(p => parseFloat(p.price) < 10);
-        if (eligibleItems.length === 0) {
-          Swal.fire({
-            icon: 'info',
-            title: 'Sin productos elegibles',
-            text: 'El código JEREMIAS60 solo se aplica a productos menores de S/10.',
-          });
-          discountMessage.style.display = 'none';
-          return;
-        }
-
-        discount = eligibleItems.reduce((acc, item) => acc + parseFloat(item.price) * 0.6, 0);
-        total -= discount;
-        discountMessage.textContent = 'Descuento aplicado: 60% en productos menores de S/10';
-        discountMessage.style.color = 'orange';
-        discountMessage.style.display = 'block';
-      } 
-      else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Código inválido',
-          text: 'El código ingresado no es válido.',
+        // Aplicar el descuento a los productos
+        let totalAmount = 0;
+        orderData.products.forEach(product => {
+          totalAmount += product.price;
         });
-        discountMessage.style.display = 'none';
-        return;
-      }
 
-      document.getElementById('totalAmount').textContent = total.toFixed(2);
+        const discountedPrice = totalAmount - (totalAmount * discount);
+        discountMessage.innerHTML += `<br>Total con descuento: S/ ${discountedPrice.toFixed(2)}`;
+      } else {
+        discountMessage.innerHTML = "Código no válido. Intenta nuevamente.";
+        discountMessage.style.color = "red";
+      }
     }
   </script>
 </body>
