@@ -148,6 +148,11 @@
         total -= discountAmount;
         document.getElementById('discountMessage').style.display = 'block';
         document.getElementById('totalAmount').textContent = total.toFixed(2);
+           if (discountCode === 'JEREMIAS60') {
+        const discountAmount = total * 0.60; // 10% de descuento
+        total -= discountAmount;
+        document.getElementById('discountMessage').style.display = 'block';
+        document.getElementById('totalAmount').textContent = total.toFixed(2);
       } else {
         Swal.fire({
           icon: 'error',
