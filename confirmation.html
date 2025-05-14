@@ -101,7 +101,7 @@
     <div class="discount-section">
       <label for="discountCode">Código de descuento:</label><br />
       <input type="text" id="discountCode" placeholder="Ingresa tu código">
-      <button onclick="applyDiscount()">Aplicar Descuento</button>
+      <button id="applyBtn">Aplicar Descuento</button>
       <p id="discountMessage">Descuento aplicado</p>
     </div>
 
@@ -109,10 +109,12 @@
   </div>
 
   <script>
+    let total = 0;
+
     window.onload = () => {
       const order = JSON.parse(localStorage.getItem('orderData'));
 
-      if (!order) {
+      if (!order || !order.products) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -128,13 +130,13 @@
       document.getElementById('buyerName').textContent = order.name;
       document.getElementById('buyerEmail').textContent = order.email;
 
-      let total = 0;
       const productList = document.getElementById('productList');
 
+      total = 0;
       order.products.forEach(product => {
         const item = document.createElement('li');
-        item.textContent = `${product.name} - S/ ${product.price}`;
-        total += product.price;
+        item.textContent = `${product.name} - S/ ${parseFloat(product.price).toFixed(2)}`;
+        total += parseFloat(product.price);
         productList.appendChild(item);
       });
 
@@ -142,31 +144,31 @@
       sessionStorage.setItem('totalAmount', total.toFixed(2));
     };
 
-    function applyDiscount() {
+    document.getElementById('applyBtn').addEventListener('click', () => {
       const discountCode = document.getElementById('discountCode').value.trim().toUpperCase();
-      let total = parseFloat(sessionStorage.getItem('totalAmount'));
       const discountMessage = document.getElementById('discountMessage');
+      let total = parseFloat(sessionStorage.getItem('totalAmount'));
+      let discount = 0;
 
       if (discountCode === 'FINGER10') {
-        const discount = total * 0.10;
-        total -= discount;
+        discount = total * 0.10;
         discountMessage.textContent = 'Descuento aplicado: 10%';
-        discountMessage.style.display = 'block';
-        document.getElementById('totalAmount').textContent = total.toFixed(2);
       } else if (discountCode === 'JEREMIAS60') {
-        const discount = total * 0.60;
-        total -= discount;
+        discount = total * 0.60;
         discountMessage.textContent = 'Descuento aplicado: 60% 🔥';
-        discountMessage.style.display = 'block';
-        document.getElementById('totalAmount').textContent = total.toFixed(2);
       } else {
         Swal.fire({
           icon: 'error',
           title: 'Código de descuento inválido',
-          text: 'El código ingresado no es válido. Intenta nuevamente.',
+          text: 'El código ingresado no es válido.',
         });
+        return;
       }
-    }
+
+      const finalTotal = total - discount;
+      document.getElementById('totalAmount').textContent = finalTotal.toFixed(2);
+      discountMessage.style.display = 'block';
+    });
   </script>
 </body>
 </html>
